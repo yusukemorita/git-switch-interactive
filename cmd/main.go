@@ -3,18 +3,24 @@ package main
 import (
 	"fmt"
 	"log"
-	"os/exec"
+
+
+	"example.com/git-switch-interactive/internal/git"
 )
 
 
 func main() {
-	fmt.Print("hello")
-	command := exec.Command("git branch")
-
-	output, err := command.Output()
+	branches, err := git.ListBranches()
 	if err != nil {
-		log.Fatalf("error when running git branch: %s", err.Error())
+		log.Fatalf(err.Error())
 	}
 
-	log.Print(output)
+	for _, branch := range branches {
+		if branch.IsCurrent {
+			fmt.Printf("- # %s\n", branch.Name)
+			continue
+		}
+
+		fmt.Printf("- %s\n", branch.Name)
+	}
 }
