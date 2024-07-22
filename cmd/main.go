@@ -71,6 +71,7 @@ func drawBranches(current git.Branch, otherBranches []git.Branch, currentIndex i
 		//
 		// This is done by sending a VT100 escape code to the terminal
 		// @see http://www.climagic.org/mirrors/VT100_Escape_Codes.html
+		// ref: https://medium.com/@nexidian/writing-an-interactive-cli-menu-in-golang-d6438b175fb6
 		fmt.Printf("\033[%dA", len(otherBranches)+1)
 	}
 
