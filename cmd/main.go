@@ -9,11 +9,17 @@ import (
 )
 
 var (
+	// keycodes
 	up        []byte = []byte{27, 91, 65}
 	down      []byte = []byte{27, 91, 66}
 	enter     []byte = []byte{13, 0, 0}
 	escape    []byte = []byte{27, 0, 0}
 	control_c []byte = []byte{3, 0, 0}
+
+	// colours
+	colourReset          = "\033[0m"
+	selectedBranchColour = "\033[34m" // blue
+	currentBranchColour  = "\033[32m" // green
 )
 
 func main() {
@@ -65,15 +71,14 @@ func drawBranches(current git.Branch, otherBranches []git.Branch, currentIndex i
 		//
 		// This is done by sending a VT100 escape code to the terminal
 		// @see http://www.climagic.org/mirrors/VT100_Escape_Codes.html
-		fmt.Printf("\033[%dA", len(otherBranches) + 1)
+		fmt.Printf("\033[%dA", len(otherBranches)+1)
 	}
 
-	// first, draw the current branch
-	fmt.Printf("current: %s\n", current.Name)
+	fmt.Printf("%s  %s (current)%s\n", currentBranchColour, current.Name, colourReset)
 
 	for index, branch := range otherBranches {
 		if index == currentIndex {
-			fmt.Printf("> %s\n", branch.Name)
+			fmt.Printf("%s> %s%s\n", selectedBranchColour, branch.Name, colourReset)
 		} else {
 			fmt.Printf("  %s\n", branch.Name)
 		}
