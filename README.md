@@ -5,7 +5,7 @@ A simple tool to interactively switch git branches.
 ## Installation
 
 ```
-go build -o git-switch-interactive cmd/main.go 
+go build -o git-switch-interactive
 mv ./git-switch-interactive ~/go/bin/
 ```
 
