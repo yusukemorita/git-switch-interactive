@@ -7,8 +7,7 @@ import (
 )
 
 type Branch struct {
-	Name      string
-	IsCurrent bool
+	Name string
 }
 
 func ListBranches() (current Branch, other []Branch, err error) {
@@ -27,10 +26,7 @@ func ListBranches() (current Branch, other []Branch, err error) {
 
 		if strings.HasPrefix(line, "*") {
 			lineWithoutAsterisk := strings.Replace(line, "* ", "", 1)
-			current = Branch{
-				Name:      strings.TrimSpace(lineWithoutAsterisk),
-				IsCurrent: true,
-			}
+			current = Branch{Name: strings.TrimSpace(lineWithoutAsterisk)}
 			continue
 		}
 
