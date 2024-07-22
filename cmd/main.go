@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"example.com/git-switch-interactive/internal/git"
+	"github.com/yusukemorita/git-switch-interactive/internal/git"
 	"github.com/pkg/term"
 )
 
