@@ -41,3 +41,13 @@ func ListBranches() ([]Branch, error) {
 
 	return branches, nil
 }
+
+func Switch(branch Branch) error {
+	command := exec.Command("git", "switch", branch.Name)
+	outputBytes, err := command.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error when running git branch.\n%s", string(outputBytes))
+	}
+
+	return nil
+}

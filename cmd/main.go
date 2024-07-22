@@ -49,7 +49,10 @@ func main() {
 		}
 
 		if keycodeMatches(keycode, enter) {
-			log.Printf("switching to branch: %s", branches[currentIndex].Name)
+			err = git.Switch(branches[currentIndex])
+			if err != nil {
+				log.Fatal(err.Error())
+			}
 			break
 		}
 	}
