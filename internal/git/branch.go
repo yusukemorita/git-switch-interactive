@@ -11,16 +11,14 @@ type Branch struct {
 	IsCurrent bool
 }
 
-func ListBranches() ([]Branch, error) {
+func ListBranches() (current Branch, other []Branch, err error) {
 	command := exec.Command("git", "branch")
 	outputBytes, err := command.Output()
 	if err != nil {
-		return nil, fmt.Errorf("error when running git branch: %s", err.Error())
+		return Branch{}, nil, fmt.Errorf("error when running git branch: %s", err.Error())
 	}
 
 	lines := strings.Split(string(outputBytes), "\n")
-
-	var branches []Branch
 
 	for _, line := range lines {
 		if line == "" {
@@ -29,17 +27,17 @@ func ListBranches() ([]Branch, error) {
 
 		if strings.HasPrefix(line, "*") {
 			lineWithoutAsterisk := strings.Replace(line, "* ", "", 1)
-			branches = append(branches, Branch{
+			current = Branch{
 				Name:      strings.TrimSpace(lineWithoutAsterisk),
 				IsCurrent: true,
-			})
+			}
 			continue
 		}
 
-		branches = append(branches, Branch{Name: strings.TrimSpace(line)})
+		other = append(other, Branch{Name: strings.TrimSpace(line)})
 	}
 
-	return branches, nil
+	return
 }
 
 func Switch(branch Branch) error {

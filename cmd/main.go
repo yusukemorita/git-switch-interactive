@@ -17,13 +17,13 @@ var (
 )
 
 func main() {
-	branches, err := git.ListBranches()
+	currentBranch, otherBranches, err := git.ListBranches()
 	if err != nil {
 		log.Fatalf(err.Error())
 	}
 
 	currentIndex := 0
-	drawBranches(branches, currentIndex, false)
+	drawBranches(currentBranch, otherBranches, currentIndex, false)
 
 	for {
 		keycode, err := readInput()
@@ -38,18 +38,18 @@ func main() {
 		if keycodeMatches(keycode, up) {
 			currentIndex = currentIndex - 1
 			if currentIndex < 0 {
-				currentIndex += len(branches)
+				currentIndex += len(otherBranches)
 			}
-			drawBranches(branches, currentIndex, true)
+			drawBranches(currentBranch, otherBranches, currentIndex, true)
 		}
 
 		if keycodeMatches(keycode, down) {
-			currentIndex = (currentIndex + 1) % len(branches)
-			drawBranches(branches, currentIndex, true)
+			currentIndex = (currentIndex + 1) % len(otherBranches)
+			drawBranches(currentBranch, otherBranches, currentIndex, true)
 		}
 
 		if keycodeMatches(keycode, enter) {
-			err = git.Switch(branches[currentIndex])
+			err = git.Switch(otherBranches[currentIndex])
 			if err != nil {
 				log.Fatal(err.Error())
 			}
@@ -58,17 +58,20 @@ func main() {
 	}
 }
 
-func drawBranches(branches []git.Branch, currentIndex int, redraw bool) {
+func drawBranches(current git.Branch, otherBranches []git.Branch, currentIndex int, redraw bool) {
 	if redraw {
 		// Move the cursor up n lines where n is the number of options, setting the new
 		// location to start printing from, effectively redrawing the option list
 		//
 		// This is done by sending a VT100 escape code to the terminal
 		// @see http://www.climagic.org/mirrors/VT100_Escape_Codes.html
-		fmt.Printf("\033[%dA", len(branches))
+		fmt.Printf("\033[%dA", len(otherBranches) + 1)
 	}
 
-	for index, branch := range branches {
+	// first, draw the current branch
+	fmt.Printf("current: %s\n", current.Name)
+
+	for index, branch := range otherBranches {
 		if index == currentIndex {
 			fmt.Printf("> %s\n", branch.Name)
 		} else {
