@@ -4,18 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/yusukemorita/git-switch-interactive/internal/git"
 	"github.com/pkg/term"
+	"github.com/yusukemorita/git-switch-interactive/internal/git"
+	"github.com/yusukemorita/git-switch-interactive/internal/keycode"
 )
 
 var (
-	// keycodes
-	up        []byte = []byte{27, 91, 65}
-	down      []byte = []byte{27, 91, 66}
-	enter     []byte = []byte{13, 0, 0}
-	escape    []byte = []byte{27, 0, 0}
-	control_c []byte = []byte{3, 0, 0}
-
 	// colours
 	colourReset          = "\033[0m"
 	selectedBranchColour = "\033[34m" // blue
@@ -32,16 +26,16 @@ func main() {
 	drawBranches(currentBranch, otherBranches, currentIndex, false)
 
 	for {
-		keycode, err := readInput()
+		input, err := readInput()
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
-		if keycodeMatches(keycode, escape) || keycodeMatches(keycode, control_c) {
+		if keycode.Matches(input, keycode.ESCAPE, keycode.CONTROL_C) {
 			break
 		}
 
-		if keycodeMatches(keycode, up) {
+		if keycode.Matches(input, keycode.UP, keycode.K) {
 			currentIndex = currentIndex - 1
 			if currentIndex < 0 {
 				currentIndex += len(otherBranches)
@@ -49,12 +43,12 @@ func main() {
 			drawBranches(currentBranch, otherBranches, currentIndex, true)
 		}
 
-		if keycodeMatches(keycode, down) {
+		if keycode.Matches(input, keycode.DOWN, keycode.J) {
 			currentIndex = (currentIndex + 1) % len(otherBranches)
 			drawBranches(currentBranch, otherBranches, currentIndex, true)
 		}
 
-		if keycodeMatches(keycode, enter) {
+		if keycode.Matches(input, keycode.ENTER) {
 			err = git.Switch(otherBranches[currentIndex])
 			if err != nil {
 				log.Fatal(err.Error())
@@ -104,8 +98,4 @@ func readInput() ([]byte, error) {
 	terminal.Close()
 
 	return readBytes, nil
-}
-
-func keycodeMatches(a, b []byte) bool {
-	return a[0] == b[0] && a[1] == b[1] && a[2] == b[2]
 }
