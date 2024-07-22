@@ -9,11 +9,10 @@ import (
 	"github.com/yusukemorita/git-switch-interactive/internal/keycode"
 )
 
-var (
-	// colours
-	colourReset          = "\033[0m"
-	selectedBranchColour = "\033[34m" // blue
-	currentBranchColour  = "\033[32m" // green
+const (
+	COLOUR_RESET          = "\033[0m"
+	COLOUR_SELECTED_BRANCH = "\033[34m" // blue
+	COLOUR_CURRENT_BRANCH  = "\033[32m" // green
 )
 
 func main() {
@@ -31,10 +30,12 @@ func main() {
 			log.Fatal(err.Error())
 		}
 
+		// exit
 		if keycode.Matches(input, keycode.ESCAPE, keycode.CONTROL_C) {
 			break
 		}
 
+		// move cursor up
 		if keycode.Matches(input, keycode.UP, keycode.K) {
 			currentIndex = currentIndex - 1
 			if currentIndex < 0 {
@@ -43,11 +44,13 @@ func main() {
 			drawBranches(currentBranch, otherBranches, currentIndex, true)
 		}
 
+		// move cursor down
 		if keycode.Matches(input, keycode.DOWN, keycode.J) {
 			currentIndex = (currentIndex + 1) % len(otherBranches)
 			drawBranches(currentBranch, otherBranches, currentIndex, true)
 		}
 
+		// switch branch
 		if keycode.Matches(input, keycode.ENTER) {
 			err = git.Switch(otherBranches[currentIndex])
 			if err != nil {
@@ -69,11 +72,11 @@ func drawBranches(current git.Branch, otherBranches []git.Branch, currentIndex i
 		fmt.Printf("\033[%dA", len(otherBranches)+1)
 	}
 
-	fmt.Printf("%s  %s (current)%s\n", currentBranchColour, current.Name, colourReset)
+	fmt.Printf("%s  %s (current)%s\n", COLOUR_CURRENT_BRANCH, current.Name, COLOUR_RESET)
 
 	for index, branch := range otherBranches {
 		if index == currentIndex {
-			fmt.Printf("%s> %s%s\n", selectedBranchColour, branch.Name, colourReset)
+			fmt.Printf("%s> %s%s\n", COLOUR_SELECTED_BRANCH, branch.Name, COLOUR_RESET)
 		} else {
 			fmt.Printf("  %s\n", branch.Name)
 		}
