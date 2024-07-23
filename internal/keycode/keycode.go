@@ -8,6 +8,8 @@ var (
 	ENTER     = [3]byte{13, 0, 0}
 	ESCAPE    = [3]byte{27, 0, 0}
 	CONTROL_C = [3]byte{3, 0, 0}
+	D         = [3]byte{100, 0, 0}
+	Y         = [3]byte{121, 0, 0}
 )
 
 func Matches(input []byte, keycodes ...[3]byte) bool {

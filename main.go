@@ -31,7 +31,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-
+		
 		// exit
 		if keycode.Matches(input, keycode.ESCAPE, keycode.CONTROL_C) {
 			break
@@ -54,6 +54,29 @@ func main() {
 			err = git.Switch(branchMenu.SelectedBranch())
 			if err != nil {
 				log.Fatal(err.Error())
+			}
+			break
+		}
+		
+		// delete branch
+		if keycode.Matches(input, keycode.D) {
+			branch := branchMenu.SelectedBranch()
+
+			fmt.Printf("Are you sure you want to delete the following branch? [y/n]\n%s%s%s\n", COLOUR_SELECTED_BRANCH, branch.Name, COLOUR_RESET)
+
+			input, err := readInput()
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+
+			if keycode.Matches(input, keycode.Y) {
+				err = git.Delete(branch)
+				if err != nil {
+					log.Fatal(err.Error())
+				}
+				fmt.Printf("Deleted branch %s\n", branch.Name)
+			} else {
+				fmt.Println("Input does not match \"y\", ignoring")
 			}
 			break
 		}

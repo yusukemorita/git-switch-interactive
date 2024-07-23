@@ -45,3 +45,13 @@ func Switch(branch Branch) error {
 
 	return nil
 }
+
+func Delete(branch Branch) error {
+	command := exec.Command("git", "branch", "-D", branch.Name)
+	outputBytes, err := command.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error when running git branch.\n%s", string(outputBytes))
+	}
+
+	return nil
+}
