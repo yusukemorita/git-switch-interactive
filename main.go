@@ -78,7 +78,7 @@ func main() {
 			}
 
 			if keycode.Matches(input, keycode.Y) {
-				var deletedBranchNames []string 
+				var deletedBranchNames []string
 				for _, branch := range branchMenu.SelectedForDelete {
 					deletedBranchNames = append(deletedBranchNames, branch.Name)
 					err = git.Delete(branch)
@@ -113,17 +113,15 @@ func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool, isDeleteMode bo
 		line := ""
 
 		if branch == branchMenu.SelectedBranch() {
-			line += "> "
+			line += ">"
 		} else {
-			line += "  "
+			line += " "
 		}
 
-		if isDeleteMode {
-			if slices.Contains(branchMenu.SelectedForDelete, branch) {
-				line += "d "
-			} else {
-				line += "  "
-			}
+		if isDeleteMode && slices.Contains(branchMenu.SelectedForDelete, branch) {
+			line += "🗑️ "
+		} else {
+			line += "  "
 		}
 
 		line += branch.Name
