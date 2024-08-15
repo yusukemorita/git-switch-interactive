@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"slices"
+	"strings"
 
 	"github.com/pkg/term"
 	"github.com/yusukemorita/git-switch-interactive/internal/branchmenu"
@@ -22,16 +24,17 @@ func main() {
 		log.Fatalf(err.Error())
 	}
 
+	var isDeleteMode bool
 	branchMenu := branchmenu.New(currentBranch, otherBranches)
-	
-	drawBranches(branchMenu, false)
+
+	drawBranches(branchMenu, false, isDeleteMode)
 
 	for {
 		input, err := readInput()
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-		
+
 		// exit
 		if keycode.Matches(input, keycode.ESCAPE, keycode.CONTROL_C) {
 			break
@@ -40,29 +43,34 @@ func main() {
 		// move cursor up
 		if keycode.Matches(input, keycode.UP, keycode.K) {
 			branchMenu.CursorUp()
-			drawBranches(branchMenu, true)
+			drawBranches(branchMenu, true, isDeleteMode)
 		}
 
 		// move cursor down
 		if keycode.Matches(input, keycode.DOWN, keycode.J) {
 			branchMenu.CursorDown()
-			drawBranches(branchMenu, true)
+			drawBranches(branchMenu, true, isDeleteMode)
 		}
 
 		// switch branch
-		if keycode.Matches(input, keycode.ENTER) {
+		if !isDeleteMode && keycode.Matches(input, keycode.ENTER) {
 			err = git.Switch(branchMenu.SelectedBranch())
 			if err != nil {
 				log.Fatal(err.Error())
 			}
 			break
 		}
-		
-		// delete branch
-		if keycode.Matches(input, keycode.D) {
-			branch := branchMenu.SelectedBranch()
 
-			fmt.Printf("Are you sure you want to delete the following branch? [y/n]\n%s%s%s\n", COLOUR_SELECTED_BRANCH, branch.Name, COLOUR_RESET)
+		// select branch for deletion
+		if keycode.Matches(input, keycode.D) {
+			isDeleteMode = true
+			branchMenu.SelectCurrentForDelete()
+			drawBranches(branchMenu, true, isDeleteMode)
+		}
+
+		// delete selected branches
+		if isDeleteMode && keycode.Matches(input, keycode.ENTER) {
+			fmt.Printf("Are you sure you want to delete the selected branches? [y/n]\n")
 
 			input, err := readInput()
 			if err != nil {
@@ -70,11 +78,16 @@ func main() {
 			}
 
 			if keycode.Matches(input, keycode.Y) {
-				err = git.Delete(branch)
-				if err != nil {
-					log.Fatal(err.Error())
+				var deletedBranchNames []string 
+				for _, branch := range branchMenu.SelectedForDelete {
+					deletedBranchNames = append(deletedBranchNames, branch.Name)
+					err = git.Delete(branch)
+					if err != nil {
+						log.Fatal(err.Error())
+					}
 				}
-				fmt.Printf("Deleted branch %s\n", branch.Name)
+
+				fmt.Printf("deleted branches: %s\n", strings.Join(deletedBranchNames, ", "))
 			} else {
 				fmt.Println("Input does not match \"y\", ignoring")
 			}
@@ -83,7 +96,7 @@ func main() {
 	}
 }
 
-func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool) {
+func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool, isDeleteMode bool) {
 	if redraw {
 		// Move the cursor up n lines where n is the number of options, setting the new
 		// location to start printing from, effectively redrawing the option list
@@ -97,11 +110,29 @@ func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool) {
 	fmt.Printf("%s  %s (current)%s\n", COLOUR_CURRENT_BRANCH, branchMenu.Current.Name, COLOUR_RESET)
 
 	for _, branch := range branchMenu.Others {
+		line := ""
+
 		if branch == branchMenu.SelectedBranch() {
-			fmt.Printf("%s> %s%s\n", COLOUR_SELECTED_BRANCH, branch.Name, COLOUR_RESET)
+			line += "> "
 		} else {
-			fmt.Printf("  %s\n", branch.Name)
+			line += "  "
 		}
+
+		if isDeleteMode {
+			if slices.Contains(branchMenu.SelectedForDelete, branch) {
+				line += "d "
+			} else {
+				line += "  "
+			}
+		}
+
+		line += branch.Name
+
+		if branch == branchMenu.SelectedBranch() {
+			line = fmt.Sprintf("%s%s%s", COLOUR_SELECTED_BRANCH, line, COLOUR_RESET)
+		}
+
+		fmt.Println(line)
 	}
 }
 

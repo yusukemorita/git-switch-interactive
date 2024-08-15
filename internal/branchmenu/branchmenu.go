@@ -11,9 +11,10 @@ func New(current git.Branch, others []git.Branch) BranchMenu {
 }
 
 type BranchMenu struct {
-	Current     git.Branch
-	Others      []git.Branch
-	cursorIndex int
+	Current           git.Branch
+	Others            []git.Branch
+	SelectedForDelete []git.Branch
+	cursorIndex       int
 }
 
 func (menu *BranchMenu) CursorUp() {
@@ -34,4 +35,8 @@ func (menu *BranchMenu) SelectedBranch() git.Branch {
 func (menu *BranchMenu) BranchCount() uint {
 	// increment by 1 to count the current branch as well
 	return uint(len(menu.Others) + 1)
+}
+
+func (menu *BranchMenu) SelectCurrentForDelete() {
+	menu.SelectedForDelete = append(menu.SelectedForDelete, menu.SelectedBranch())
 }
