@@ -54,3 +54,7 @@ func (menu *BranchMenu) ToggleCurrentForDelete() {
 		menu.SelectedForDelete = append(menu.SelectedForDelete, menu.SelectedBranch())
 	}
 }
+
+func (menu *BranchMenu) HasBranchesSelectedForDelete() bool {
+	return len(menu.SelectedForDelete) > 0
+}

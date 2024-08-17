@@ -24,10 +24,9 @@ func main() {
 		log.Fatalf(err.Error())
 	}
 
-	var isDeleteMode bool
 	branchMenu := branchmenu.New(currentBranch, otherBranches)
 
-	drawBranches(branchMenu, false, isDeleteMode)
+	drawBranches(branchMenu, false)
 
 	for {
 		input, err := readInput()
@@ -43,17 +42,17 @@ func main() {
 		// move cursor up
 		if keycode.Matches(input, keycode.UP, keycode.K) {
 			branchMenu.CursorUp()
-			drawBranches(branchMenu, true, isDeleteMode)
+			drawBranches(branchMenu, true)
 		}
 
 		// move cursor down
 		if keycode.Matches(input, keycode.DOWN, keycode.J) {
 			branchMenu.CursorDown()
-			drawBranches(branchMenu, true, isDeleteMode)
+			drawBranches(branchMenu, true)
 		}
 
 		// switch branch
-		if !isDeleteMode && keycode.Matches(input, keycode.ENTER) {
+		if !branchMenu.HasBranchesSelectedForDelete() && keycode.Matches(input, keycode.ENTER) {
 			err = git.Switch(branchMenu.SelectedBranch())
 			if err != nil {
 				log.Fatal(err.Error())
@@ -63,13 +62,12 @@ func main() {
 
 		// select/unselect branch for deletion
 		if keycode.Matches(input, keycode.D) {
-			isDeleteMode = true
 			branchMenu.ToggleCurrentForDelete()
-			drawBranches(branchMenu, true, isDeleteMode)
+			drawBranches(branchMenu, true)
 		}
 
 		// delete selected branches
-		if isDeleteMode && keycode.Matches(input, keycode.ENTER) {
+		if branchMenu.HasBranchesSelectedForDelete() && keycode.Matches(input, keycode.ENTER) {
 			fmt.Printf("Are you sure you want to delete the selected branches? [y/n]\n")
 
 			input, err := readInput()
@@ -96,7 +94,7 @@ func main() {
 	}
 }
 
-func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool, isDeleteMode bool) {
+func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool) {
 	if redraw {
 		// Move the cursor up n lines where n is the number of options, setting the new
 		// location to start printing from, effectively redrawing the option list
@@ -118,7 +116,7 @@ func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool, isDeleteMode bo
 			line += " "
 		}
 
-		if isDeleteMode && slices.Contains(branchMenu.SelectedForDelete, branch) {
+		if slices.Contains(branchMenu.SelectedForDelete, branch) {
 			line += "🗑️ "
 		} else {
 			line += "  "
