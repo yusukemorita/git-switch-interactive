@@ -14,7 +14,7 @@ jobs:
           go-version: '1.22'
 
       - name: build
-        run: go build .
+        run: go build cmd/main.go
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
