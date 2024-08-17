@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"slices"
 	"strings"
 
@@ -18,7 +19,31 @@ const (
 	COLOUR_CURRENT_BRANCH  = "\033[32m" // green
 )
 
+const HELP_TEXT = `
+git-switch-interactive is an intuitive CLI tool that makes switching between
+and deleting branches a breeze!
+  
+* Switch between branches
+Use up/down arrow buttons (or k/j for vimmers) to move the cursor between branches.
+Switch to the branch using ENTER.
+
+* Delete multiple branches
+Use d to select the branch with the cursor for deletion.
+Delete all selected branches using ENTER.
+
+`
+
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "--help" {
+		fmt.Print(HELP_TEXT)
+		return
+	}
+
+	if len(os.Args) != 1 {
+		fmt.Println("Unsupported arguments. Supported arguments: \"--help\"")
+		return
+	}
+
 	currentBranch, otherBranches, err := git.ListBranches()
 	if err != nil {
 		log.Fatal(err.Error())
