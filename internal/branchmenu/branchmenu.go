@@ -1,6 +1,10 @@
 package branchmenu
 
-import "github.com/yusukemorita/git-switch-interactive/internal/git"
+import (
+	"slices"
+
+	"github.com/yusukemorita/git-switch-interactive/internal/git"
+)
 
 func New(current git.Branch, others []git.Branch) BranchMenu {
 	return BranchMenu{
@@ -38,5 +42,15 @@ func (menu *BranchMenu) BranchCount() uint {
 }
 
 func (menu *BranchMenu) SelectCurrentForDelete() {
-	menu.SelectedForDelete = append(menu.SelectedForDelete, menu.SelectedBranch())
+	if slices.Contains(menu.SelectedForDelete, menu.SelectedBranch()) {
+		var newSelectedForDelete []git.Branch
+		for _, branch := range menu.SelectedForDelete {
+			if branch != menu.SelectedBranch() {
+				newSelectedForDelete = append(newSelectedForDelete, branch)
+			}
+		}
+		menu.SelectedForDelete = newSelectedForDelete
+	} else {
+		menu.SelectedForDelete = append(menu.SelectedForDelete, menu.SelectedBranch())
+	}
 }

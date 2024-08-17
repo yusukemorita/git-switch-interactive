@@ -61,7 +61,7 @@ func main() {
 			break
 		}
 
-		// select branch for deletion
+		// select/unselect branch for deletion
 		if keycode.Matches(input, keycode.D) {
 			isDeleteMode = true
 			branchMenu.SelectCurrentForDelete()
