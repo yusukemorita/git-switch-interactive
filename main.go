@@ -64,7 +64,7 @@ func main() {
 		// select/unselect branch for deletion
 		if keycode.Matches(input, keycode.D) {
 			isDeleteMode = true
-			branchMenu.SelectCurrentForDelete()
+			branchMenu.ToggleCurrentForDelete()
 			drawBranches(branchMenu, true, isDeleteMode)
 		}
 
