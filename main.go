@@ -102,10 +102,16 @@ func drawBranches(branchMenu branchmenu.BranchMenu, redraw bool) {
 		// This is done by sending a VT100 escape code to the terminal
 		// @see http://www.climagic.org/mirrors/VT100_Escape_Codes.html
 		// ref: https://medium.com/@nexidian/writing-an-interactive-cli-menu-in-golang-d6438b175fb6
-		fmt.Printf("\033[%dA", branchMenu.BranchCount())
+		fmt.Printf("\033[%dA", branchMenu.BranchCount()+1)
 	}
 
-	fmt.Printf("%s  %s (current)%s\n", COLOUR_CURRENT_BRANCH, branchMenu.Current.Name, COLOUR_RESET)
+	if branchMenu.HasBranchesSelectedForDelete() {
+		fmt.Println("press ENTER to delete the selected branches, press \"d\" to select/unselect a branch for deletion.")
+	} else {
+		fmt.Println("press ENTER to switch to the selected branch, press \"d\" to select a branch for deletion.")
+	}
+
+	fmt.Printf("%s   %s (current)%s\n", COLOUR_CURRENT_BRANCH, branchMenu.Current.Name, COLOUR_RESET)
 
 	for _, branch := range branchMenu.Others {
 		line := ""
