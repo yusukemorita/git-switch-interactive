@@ -21,7 +21,7 @@ const (
 func main() {
 	currentBranch, otherBranches, err := git.ListBranches()
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	branchMenu := branchmenu.New(currentBranch, otherBranches)
@@ -151,8 +151,14 @@ func readInput() ([]byte, error) {
 
 	readBytes := make([]byte, 3)
 	_, err = terminal.Read(readBytes)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	terminal.Restore()
+	err = terminal.Restore()
+	if err != nil {
+		log.Fatal(err)
+	}
 	terminal.Close()
 
 	return readBytes, nil
