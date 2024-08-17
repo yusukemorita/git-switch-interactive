@@ -2,6 +2,11 @@
 
 A simple tool to interactively switch git branches.
 
+## Usage
+
+![usage demonstration](./usage.mov)
+
+
 ## Installation
 
 ```
