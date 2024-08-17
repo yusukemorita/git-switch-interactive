@@ -41,7 +41,7 @@ func (menu *BranchMenu) BranchCount() uint {
 	return uint(len(menu.Others) + 1)
 }
 
-func   (menu *BranchMenu) ToggleCurrentForDelete() {
+func (menu *BranchMenu) ToggleCurrentForDelete() {
 	if slices.Contains(menu.SelectedForDelete, menu.SelectedBranch()) {
 		var newSelectedForDelete []git.Branch
 		for _, branch := range menu.SelectedForDelete {
