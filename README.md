@@ -11,8 +11,7 @@ go install github.com/yusukemorita/git-switch-interactive@latest
 or build locally
 
 ```
-go build -o git-switch-interactive
-mv ./git-switch-interactive ~/go/bin/
+go build -o git-switch-interactive; mv ./git-switch-interactive ~/go/bin/
 ```
 
 ## Releasing a new version
