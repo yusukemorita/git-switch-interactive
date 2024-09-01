@@ -11,7 +11,8 @@ type Branch struct {
 }
 
 func ListBranches() (current Branch, other []Branch, err error) {
-	command := exec.Command("git", "branch")
+	// sort by last commit date (desc)
+	command := exec.Command("git", "branch", "--sort=-committerdate")
 	outputBytes, err := command.Output()
 	if err != nil {
 		return Branch{}, nil, fmt.Errorf("error when running git branch: %s", err.Error())
