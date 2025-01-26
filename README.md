@@ -1,6 +1,6 @@
 # README
 
-A simple tool to interactively switch git branches.
+A simple tool to interactively switch (and delete) git branches.
 
 ## Usage
 
@@ -22,7 +22,7 @@ go build -o git-switch-interactive cmd/main.go; mv ./git-switch-interactive ~/go
 ## Releasing a new version
 
 ```
-git tag v0.2.0
+git tag v0.1.2
 git push origin v0.1.2
 ```
 
