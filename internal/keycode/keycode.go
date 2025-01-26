@@ -1,5 +1,7 @@
 package keycode
 
+// ASCII keycodes
+// ref: https://www.ascii-code.com
 var (
 	J         = [3]byte{106, 0, 0}
 	K         = [3]byte{107, 0, 0}
@@ -10,6 +12,7 @@ var (
 	CONTROL_C = [3]byte{3, 0, 0}
 	D         = [3]byte{100, 0, 0}
 	Y         = [3]byte{121, 0, 0}
+	Q         = [3]byte{113, 0, 0}
 )
 
 func Matches(input []byte, keycodes ...[3]byte) bool {

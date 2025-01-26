@@ -60,7 +60,7 @@ func main() {
 		}
 
 		// exit
-		if keycode.Matches(input, keycode.ESCAPE, keycode.CONTROL_C) {
+		if keycode.Matches(input, keycode.ESCAPE, keycode.CONTROL_C, keycode.Q) {
 			break
 		}
 
